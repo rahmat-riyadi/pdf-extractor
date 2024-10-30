@@ -9,10 +9,10 @@ all_files = [f for f in folder_path.iterdir() if f.is_file() and f.suffix == '.p
 print(all_files)
 
 conn = mysql.connector.connect(
-    host="127.0.0.1",
-    user="root",
-    password="",
-    database="test_db"
+    host="votx.xyz",
+    user="u1567807_akar",
+    password="makassar123",
+    database="u1567807_akar"
 )
 cursor = conn.cursor()
 
@@ -22,15 +22,17 @@ insert_query = """
     """
 try:
 
-    for file in all_files:
+    for index, file in enumerate(all_files):
+
+        print(f"{file} ============> {index+1}/{len(all_files)}")
 
         with pdfplumber.open(file) as pdf:
 
             kecamatan_name = None  
-            kecamatan_pattern = r"KECAMATAN\s*:\s*(\w+)"  
+            kecamatan_pattern = r"KECAMATAN\s*:\s*(.+)"  
 
             kelurahan_name = None 
-            kelurahan_pattern = r"DESA/KELURAHAN\s*:\s*(\w+)" 
+            kelurahan_pattern = r"DESA/KELURAHAN\s*:\s*(.+)" 
 
             tps_name = None 
             tps_pattern = r"TPS\s*:\s*(\w+)" 
@@ -48,8 +50,6 @@ try:
                     if tps_match:
                         tps_name = tps_match.group(1)
 
-                print(f"Kecamatan : {kecamatan_name}, Kelurahan : {kelurahan_name}, TPS : {tps_name}")
-
                 tables = page.extract_tables()
                 for table in tables:
                     for row in table:
@@ -58,9 +58,9 @@ try:
                             del formatted_row[0]
                             del formatted_row[6]
                             formatted_row[1] = 'Laki-Laki' if row[1] == 'L' else 'Perempuan'
-                            formatted_row.extend(['SULAWESI SELATAN', 'JENEPONTO', kecamatan_name, kelurahan_name, tps_name])
+                            formatted_row.extend(['SULAWESI SELATAN', 'LUWU TIMUR', kecamatan_name, kelurahan_name, tps_name])
                             cursor.execute(insert_query, formatted_row)
-                            print("inserted : ", formatted_row)
+                            # print("inserted : ", formatted_row)
     conn.commit()
                         
 except:

@@ -1,4 +1,5 @@
 files/*
+files-jeneponto/*
 # Abaikan folder virtual environment
 env/
 
